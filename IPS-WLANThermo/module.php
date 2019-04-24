@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 class IPS_WLANThermo extends IPSModule
 {
-
     public function Create()
     {
         //Never delete this line!
@@ -38,7 +37,6 @@ class IPS_WLANThermo extends IPSModule
             $this->SendDebug('Payload', $Data->Payload, 0);
             if (property_exists($Data, 'Topic')) {
                 if (fnmatch('*/status/data*', $Data->Topic)) {
-
                     $Payload = json_decode($Data->Payload);
 
                     SetValue($this->GetIDForIdent('WLANThermoa_Charge'), $Payload->system->charge);
@@ -46,11 +44,11 @@ class IPS_WLANThermo extends IPSModule
                     SetValue($this->GetIDForIdent('WLANThermoa_RSSI'), $Payload->system->rssi);
 
                     foreach ($Payload->channel as $channel) {
-                        $this->RegisterVariableFloat('WLANThermoa_Temperature' . $channel->number, $channel->name .' '.$this->translate('Temperature'), '~Temperature');
-                        $this->RegisterVariableFloat('WLANThermoa_Min' . $channel->number, $channel->name .' '.$this->translate( 'Min'), '~Temperature');
-                        $this->RegisterVariableFloat('WLANThermoa_Max' . $channel->number, $channel->name .' '.$this->translate('Max'), '~Temperature');
-                        $this->RegisterVariableInteger('WLANThermoa_Typ' . $channel->number, $this->translate('Typ Channel').' '. $channel->number, '');
-                        $this->RegisterVariableBoolean('WLANThermoa_Alarm' . $channel->number, $this->translate('Alarm Channel').' '. $channel->number, '~Alert.Reversed');
+                        $this->RegisterVariableFloat('WLANThermoa_Temperature' . $channel->number, $channel->name . ' ' . $this->translate('Temperature'), '~Temperature');
+                        $this->RegisterVariableFloat('WLANThermoa_Min' . $channel->number, $channel->name . ' ' . $this->translate('Min'), '~Temperature');
+                        $this->RegisterVariableFloat('WLANThermoa_Max' . $channel->number, $channel->name . ' ' . $this->translate('Max'), '~Temperature');
+                        $this->RegisterVariableInteger('WLANThermoa_Typ' . $channel->number, $this->translate('Typ Channel') . ' ' . $channel->number, '');
+                        $this->RegisterVariableBoolean('WLANThermoa_Alarm' . $channel->number, $this->translate('Alarm Channel') . ' ' . $channel->number, '~Alert.Reversed');
 
                         SetValue($this->GetIDForIdent('WLANThermoa_Temperature' . $channel->number), $channel->temp);
                         SetValue($this->GetIDForIdent('WLANThermoa_Min' . $channel->number), $channel->min);
