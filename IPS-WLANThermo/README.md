@@ -1,6 +1,6 @@
 # IPS-WLANThermo
    Dieses Modul verbindet WLANThermo mit IP-Symcon.
-   Zur Zeit werden nur alle Kanäle in IP-Symocn eingelesen.
+   Zur Zeit werden nur alle Kanäle in IP-Symcon eingelesen.
      
    ## Inhaltverzeichnis
    1. [Konfiguration](#1-konfiguration)
