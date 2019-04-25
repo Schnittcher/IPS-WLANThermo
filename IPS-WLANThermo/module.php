@@ -48,7 +48,7 @@ class IPS_WLANThermo extends IPSModule
                         $this->RegisterVariableFloat('WLANThermoa_Min' . $channel->number, $channel->name . ' ' . $this->translate('Min'), '~Temperature');
                         $this->RegisterVariableFloat('WLANThermoa_Max' . $channel->number, $channel->name . ' ' . $this->translate('Max'), '~Temperature');
                         $this->RegisterVariableInteger('WLANThermoa_Typ' . $channel->number, $this->translate('Typ Channel') . ' ' . $channel->number, '');
-                        $this->RegisterVariableBoolean('WLANThermoa_Alarm' . $channel->number, $this->translate('Alarm Channel') . ' ' . $channel->number, '~Alert.Reversed');
+                        $this->RegisterVariableBoolean('WLANThermoa_Alarm' . $channel->number, $this->translate('Alarm Channel') . ' ' . $channel->number, '~Switch');
 
                         SetValue($this->GetIDForIdent('WLANThermoa_Temperature' . $channel->number), $channel->temp);
                         SetValue($this->GetIDForIdent('WLANThermoa_Min' . $channel->number), $channel->min);
@@ -59,5 +59,22 @@ class IPS_WLANThermo extends IPSModule
                 }
             }
         }
+    }
+
+    public function setAlarm(int $channel, bool $value) {
+        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
+        $Data['PacketType'] = 3;
+        $Data['QualityOfService'] = 0;
+        $Data['Retain'] = false;
+        $Data['Topic'] = 'WLanThermo/'.$this->ReadPropertyString('MQTTTopic') . '/set/channels';
+
+        $Payload['number'] = $channel;
+        $Payload['alarm'] = $value;
+
+        $Data['Payload'] = json_encode($Payload, JSON_UNESCAPED_SLASHES);
+        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
+        $this->SendDebug(__FUNCTION__, $DataJSON, 0);
+        $this->SendDataToParent($DataJSON);
     }
 }
