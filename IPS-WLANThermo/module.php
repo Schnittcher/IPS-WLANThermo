@@ -61,12 +61,13 @@ class IPS_WLANThermo extends IPSModule
         }
     }
 
-    public function setAlarm(int $channel, bool $value) {
+    public function setAlarm(int $channel, bool $value)
+    {
         $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
         $Data['PacketType'] = 3;
         $Data['QualityOfService'] = 0;
         $Data['Retain'] = false;
-        $Data['Topic'] = 'WLanThermo/'.$this->ReadPropertyString('MQTTTopic') . '/set/channels';
+        $Data['Topic'] = 'WLanThermo/' . $this->ReadPropertyString('MQTTTopic') . '/set/channels';
 
         $Payload['number'] = $channel;
         $Payload['alarm'] = $value;
