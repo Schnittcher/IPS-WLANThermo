@@ -65,19 +65,20 @@ class IPS_WLANThermo extends IPSModule
         }
     }
 
-    public function RequestAction($Ident, $Value) {
+    public function RequestAction($Ident, $Value)
+    {
         if (fnmatch('WLANThermoa_Alarm*', $Ident)) {
             $Channel = substr($Ident, -1, 1);
-            $this->SendDebug('RequestAction setAlarm',$Value,0);
-            $this->setAlarm(intval($Channel),$Value);
+            $this->SendDebug('RequestAction setAlarm', $Value, 0);
+            $this->setAlarm(intval($Channel), $Value);
         }
         if (fnmatch('WLANThermoa_Min*', $Ident)) {
             $Channel = substr($Ident, -1, 1);
-            $this->setMin(intval($Channel),$Value);
+            $this->setMin(intval($Channel), $Value);
         }
         if (fnmatch('WLANThermoa_Max*', $Ident)) {
             $Channel = substr($Ident, -1, 1);
-            $this->setMax(intval($Channel),$Value);
+            $this->setMax(intval($Channel), $Value);
         }
     }
 
