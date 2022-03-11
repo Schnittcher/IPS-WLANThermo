@@ -1,15 +1,15 @@
 {
-  "translations": {
-    "de": {
-      "State": "Status",
-      "Charge": "Laden",
-      "RSSI": "RSSI",
-      "SOC": "SOC",
-      "Temperature": "Temperatur",
-      "Min": "Min",
-      "Max": "Max",
-      "Typ Channel": "Typ Kanal",
-      "Alarm Channel": "Alarm Kanal"
+    "translations": {
+        "de": {
+            "State": "Status",
+            "Charge": "Laden",
+            "RSSI": "RSSI",
+            "SOC": "SOC",
+            "Temperature": "Temperatur",
+            "Min": "Min",
+            "Max": "Max",
+            "Typ Channel": "Typ Kanal",
+            "Alarm Channel": "Alarm Kanal"
+        }
     }
-  }
 }

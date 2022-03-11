@@ -1,9 +1,9 @@
 {
-	"id": "{EE7F261C-F0F3-4932-C4D3-E96468C90BAC}",
-	"author": "Kai Schnittcher",
-	"name": "IPS-WLANThermo",
-	"url": "https://github.com/Schnittcher/IPS-WLANThermo",
-	"version": "1.0",
-	"build": 0,
-	"date": 0
+    "id": "{EE7F261C-F0F3-4932-C4D3-E96468C90BAC}",
+    "author": "Kai Schnittcher",
+    "name": "IPS-WLANThermo",
+    "url": "https://github.com/Schnittcher/IPS-WLANThermo",
+    "version": "1.0",
+    "build": 0,
+    "date": 0
 }
