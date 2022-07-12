@@ -35,6 +35,10 @@ class WLANThermo extends IPSModule
         //Setze Filter für ReceiveData
         $MQTTTopic = $this->ReadPropertyString('MQTTTopic');
         $this->SetReceiveDataFilter('.*' . $MQTTTopic . '.*');
+
+        if ($this->HasActiveParent()) {
+            $this->getData();
+        }
     }
 
     public function ReceiveData($JSONString)
@@ -98,6 +102,20 @@ class WLANThermo extends IPSModule
             $Channel = substr($Ident, -1, 1);
             $this->setMax(intval($Channel), $Value);
         }
+    }
+
+    public function getData()
+    {
+        $Data['DataID'] = '{043EA491-0325-4ADD-8FC2-A30C8EEB4D3F}';
+        $Data['PacketType'] = 3;
+        $Data['QualityOfService'] = 0;
+        $Data['Retain'] = false;
+        $Data['Topic'] = 'WLanThermo/' . $this->ReadPropertyString('MQTTTopic') . '/get/data';
+        $Data['Payload'] = '';
+        $DataJSON = json_encode($Data);
+        $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
+        $this->SendDebug(__FUNCTION__, $DataJSON, 0);
+        $this->SendDataToParent($DataJSON);
     }
 
     public function setAlarm(int $channel, bool $value)
