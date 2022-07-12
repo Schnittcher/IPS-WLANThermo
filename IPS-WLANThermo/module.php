@@ -134,6 +134,7 @@ class WLANThermo extends IPSModule
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
+        $this->getData();
     }
 
     public function setMin(int $channel, float $value)
@@ -152,6 +153,7 @@ class WLANThermo extends IPSModule
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
+        $this->getData();
     }
 
     public function setMax(int $channel, float $value)
@@ -170,5 +172,6 @@ class WLANThermo extends IPSModule
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
+        $this->getData();
     }
 }
