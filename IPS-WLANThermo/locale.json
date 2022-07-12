@@ -9,7 +9,11 @@
             "Min": "Min",
             "Max": "Max",
             "Typ Channel": "Typ Kanal",
-            "Alarm Channel": "Alarm Kanal"
+            "Alarm Channel": "Alarm Kanal",
+            "Off": "Aus",
+            "Push": "Push",
+            "Buzzer": "Buzzer",
+            "Push-Buzzer": "Push-Buzzer"
         }
     }
 }
