@@ -1,9 +1,12 @@
 <?php
 
 declare(strict_types=1);
+eval('declare(strict_types=1);namespace WLANThermo {?>' . file_get_contents(__DIR__ . '/../libs/vendor/SymconModulHelper/VariableProfileHelper.php') . '}');
 
 class IPS_WLANThermo extends IPSModule
 {
+    use \WLANThermo\VariableProfileHelper;
+
     public function Create()
     {
         //Never delete this line!
@@ -13,6 +16,13 @@ class IPS_WLANThermo extends IPSModule
         $this->RegisterVariableBoolean('WLANThermoa_Charge', $this->Translate('Charge'), '');
         $this->RegisterVariableInteger('WLANThermoa_SOC', $this->Translate('SOC'), '');
         $this->RegisterVariableInteger('WLANThermoa_RSSI', $this->Translate('RSSI'), '');
+
+        $this->RegisterProfileIntegerEx('WLanThermo.Alarm', 'Alert', '', '', [
+            [0, $this->Translate('Off'),  '', 0xC8C8C8],
+            [1, $this->Translate('Push'),  '', 0xFA9EC8],
+            [2, $this->Translate('Buzzer'), '', 0xF05656],
+            [3, $this->Translate('Push-Buzzer'), '', 0xE00B0B],
+        ]);
 
         $this->RegisterPropertyString('MQTTTopic', '');
     }
@@ -31,34 +41,42 @@ class IPS_WLANThermo extends IPSModule
     {
         $this->SendDebug('JSON', $JSONString, 0);
         if (!empty($this->ReadPropertyString('MQTTTopic'))) {
-            $Data = json_decode($JSONString);
+            $Data = json_decode($JSONString, true);
             // Buffer decodieren und in eine Variable schreiben
-            $this->SendDebug('Topic', $Data->Topic, 0);
-            $this->SendDebug('Payload', $Data->Payload, 0);
-            if (property_exists($Data, 'Topic')) {
-                if (fnmatch('*/status/data*', $Data->Topic)) {
-                    $Payload = json_decode($Data->Payload);
+            $this->SendDebug('Topic', $Data['Topic'], 0);
+            $this->SendDebug('Payload', $Data['Payload'], 0);
+            if (array_key_exists('Topic', $Data)) {
+                if (fnmatch('*/status/data*', $Data['Topic'])) {
+                    $Payload = json_decode($Data['Payload'], true);
 
-                    SetValue($this->GetIDForIdent('WLANThermoa_Charge'), $Payload->system->charge);
-                    SetValue($this->GetIDForIdent('WLANThermoa_SOC'), $Payload->system->soc);
-                    SetValue($this->GetIDForIdent('WLANThermoa_RSSI'), $Payload->system->rssi);
+                    if (array_key_exists('charge', $Payload['system'])) {
+                        $this->SetValue('WLANThermoa_Charge', $Payload['system']['charge']);
+                    }
 
-                    foreach ($Payload->channel as $channel) {
-                        $this->RegisterVariableFloat('WLANThermoa_Temperature' . $channel->number, $channel->name . ' ' . $this->translate('Temperature'), '~Temperature');
-                        $this->RegisterVariableFloat('WLANThermoa_Min' . $channel->number, $channel->name . ' ' . $this->translate('Min'), '~Temperature');
-                        $this->RegisterVariableFloat('WLANThermoa_Max' . $channel->number, $channel->name . ' ' . $this->translate('Max'), '~Temperature');
-                        $this->RegisterVariableInteger('WLANThermoa_Typ' . $channel->number, $this->translate('Typ Channel') . ' ' . $channel->number, '');
-                        $this->RegisterVariableBoolean('WLANThermoa_Alarm' . $channel->number, $this->translate('Alarm Channel') . ' ' . $channel->number, '~Switch');
+                    if (array_key_exists('soc', $Payload['system'])) {
+                        $this->SetValue('WLANThermoa_SOC', $Payload['system']['soc']);
+                    }
 
-                        $this->EnableAction('WLANThermoa_Min' . $channel->number);
-                        $this->EnableAction('WLANThermoa_Max' . $channel->number);
-                        $this->EnableAction('WLANThermoa_Alarm' . $channel->number);
+                    if (array_key_exists('rssi', $Payload['system'])) {
+                        $this->SetValue('WLANThermoa_RSSI', $Payload['system']['rssi']);
+                    }
 
-                        SetValue($this->GetIDForIdent('WLANThermoa_Temperature' . $channel->number), $channel->temp);
-                        SetValue($this->GetIDForIdent('WLANThermoa_Min' . $channel->number), $channel->min);
-                        SetValue($this->GetIDForIdent('WLANThermoa_Max' . $channel->number), $channel->max);
-                        SetValue($this->GetIDForIdent('WLANThermoa_Typ' . $channel->number), $channel->typ);
-                        SetValue($this->GetIDForIdent('WLANThermoa_Alarm' . $channel->number), $channel->alarm);
+                    foreach ($Payload['channel'] as $channel) {
+                        $this->RegisterVariableFloat('WLANThermoa_Temperature' . $channel['number'], $channel['name'] . ' ' . $this->translate('Temperature'), '~Temperature');
+                        $this->RegisterVariableFloat('WLANThermoa_Min' . $channel['number'], $channel['name'] . ' ' . $this->translate('Min'), '~Temperature');
+                        $this->RegisterVariableFloat('WLANThermoa_Max' . $channel['number'], $channel['name'] . ' ' . $this->translate('Max'), '~Temperature');
+                        $this->RegisterVariableInteger('WLANThermoa_Typ' . $channel['number'], $this->translate('Typ Channel') . ' ' . $channel['number'], '');
+                        $this->RegisterVariableInteger('WLANThermoa_Alarm' . $channel['number'], $this->translate('Alarm Channel') . ' ' . $channel['number'], 'WLanThermo.Alarm');
+
+                        $this->EnableAction('WLANThermoa_Min' . $channel['number']);
+                        $this->EnableAction('WLANThermoa_Max' . $channel['number']);
+                        $this->EnableAction('WLANThermoa_Alarm' . $channel['number']);
+
+                        $this->SetValue('WLANThermoa_Temperature' . $channel['number'], $channel['temp']);
+                        $this->SetValue('WLANThermoa_Min' . $channel['number'], $channel['min']);
+                        $this->SetValue('WLANThermoa_Max' . $channel['number'], $channel['max']);
+                        $this->SetValue('WLANThermoa_Typ' . $channel['number'], $channel['typ']);
+                        $this->SetValue('WLANThermoa_Alarm' . $channel['number'], $channel['alarm']);
                     }
                 }
             }
@@ -93,8 +111,8 @@ class IPS_WLANThermo extends IPSModule
         $Payload['number'] = strval($channel);
         $Payload['alarm'] = $value;
 
-        $Data['Payload'] = json_encode($Payload, JSON_UNESCAPED_SLASHES);
-        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $Data['Payload'] = json_encode($Payload);
+        $DataJSON = json_encode($Data);
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
@@ -111,8 +129,8 @@ class IPS_WLANThermo extends IPSModule
         $Payload['number'] = strval($channel);
         $Payload['min'] = strval($value);
 
-        $Data['Payload'] = json_encode($Payload, JSON_UNESCAPED_SLASHES);
-        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $Data['Payload'] = json_encode($Payload);
+        $DataJSON = json_encode($Data);
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
@@ -129,8 +147,8 @@ class IPS_WLANThermo extends IPSModule
         $Payload['number'] = strval($channel);
         $Payload['max'] = strval($value);
 
-        $Data['Payload'] = json_encode($Payload, JSON_UNESCAPED_SLASHES);
-        $DataJSON = json_encode($Data, JSON_UNESCAPED_SLASHES);
+        $Data['Payload'] = json_encode($Payload);
+        $DataJSON = json_encode($Data);
         $this->SendDebug(__FUNCTION__ . 'Topic', $Data['Topic'], 0);
         $this->SendDebug(__FUNCTION__, $DataJSON, 0);
         $this->SendDataToParent($DataJSON);
