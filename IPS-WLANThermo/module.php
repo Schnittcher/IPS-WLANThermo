@@ -3,7 +3,7 @@
 declare(strict_types=1);
 eval('declare(strict_types=1);namespace WLANThermo {?>' . file_get_contents(__DIR__ . '/../libs/vendor/SymconModulHelper/VariableProfileHelper.php') . '}');
 
-class IPS_WLANThermo extends IPSModule
+class WLANThermo extends IPSModule
 {
     use \WLANThermo\VariableProfileHelper;
 
