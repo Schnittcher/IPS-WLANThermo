@@ -46,7 +46,12 @@ class WLANThermo extends IPSModule
         $this->SendDebug('JSON', $JSONString, 0);
         if (!empty($this->ReadPropertyString('MQTTTopic'))) {
             $Data = json_decode($JSONString, true);
-            // Buffer decodieren und in eine Variable schreiben
+
+            //Für MQTT Fix in IPS Version 6.3
+            if (IPS_GetKernelDate() > 1670886000) {
+                $Data['Payload'] = utf8_decode($Data['Payload']);
+            }
+
             $this->SendDebug('Topic', $Data['Topic'], 0);
             $this->SendDebug('Payload', $Data['Payload'], 0);
             if (array_key_exists('Topic', $Data)) {
